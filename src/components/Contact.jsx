@@ -1,75 +1,159 @@
-import React from 'react'
-import { toast } from 'react-toastify';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { FaMapMarkerAlt, FaEnvelope, FaPhone } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+
+// Animation Variants
+const fadeUp = {
+    hidden: { opacity: 0, y: 60 },
+    show: { opacity: 1, y: 0, transition: { duration: 1 } }
+};
+
+const fadeLeft = {
+    hidden: { opacity: 0, x: 60 },
+    show: { opacity: 1, x: 0, transition: { duration: 1 } }
+};
+
+const fadeRight = {
+    hidden: { opacity: 0, x: -60 },
+    show: { opacity: 1, x: 0, transition: { duration: 1 } }
+};
+
+const stagger = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.15 } }
+};
 
 const Contact = () => {
-    const [result, setResult] = React.useState("");
+    const { t } = useTranslation();
+    const [result, setResult] = useState("");
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        setResult("Sending....");
+        setResult(t("contact_sending"));
+
         const formData = new FormData(event.target);
 
-        formData.append("access_key", "YOUR_ACCESS_KEY_HERE");
+        formData.append("access_key", "b88fa3a9-d08c-4269-95e5-003a0448dc93");
 
         const response = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
-            body: formData
+            body: formData,
         });
 
         const data = await response.json();
 
         if (data.success) {
             setResult("");
-            toast.success("Form Submitted Successfully")
+            toast.success(t("contact_success"));
             event.target.reset();
         } else {
-            console.log("Error", data);
-            toast.error(data.message)
+            toast.error(t("contact_error"));
             setResult("");
         }
     };
 
-  return (
-    <motion.div
-    initial={{ opacity: 0, y: -200 }}
-    transition={{ duration: 1 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    className='text-center p-6 pt-28 pb-20 lg:px-32 w-full
-    overflow-hidden' id='Contact'>
-        <h1 className='text-2xl sm:text-4xl font-bold mb-2
-        text-center'>Contact <span className='underline 
-        underline-offset-4 decoration-1 under font-light'>With Us</span></h1>
-        <p className='text-gray-500 max-w-80 text-center mb-8
-        mx-auto'>Ready To Make A Move? Let's Build Your Future Together</p> 
+    return (
+        <div
+            id="Contact"
+            className="w-full min-h-screen py-24 px-6 lg:px-20 flex justify-center items-start bg-white">
+            <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                className="w-full max-w-7xl bg-white shadow-xl rounded-2xl p-10 lg:p-14 border border-gray-200">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
 
-<form onSubmit={onSubmit} className='max-w-2xl mx-auto text-gray-600 pt-8'>
-    <div className='flex flex-wrap'>
-        <div className='w-full md:w-1/2 text-left'>
-            Your Name
-            <input className='w-full border border-gray-300 rounded py-3
-            px-4 mt-2' type="text" name='Name' placeholder='Your Name'
-            required/>
-        </div>
-            <div className='w-full md:w-1/2 text-left md:pl-4'>
-            Your Email
-            <input className='w-full border border-gray-300 rounded py-3
-            px-4 mt-2' type="email" name='Email' placeholder='Your Email'
-            required />
-        </div>
-    </div>
-        <div className='my-6 text-left'>
-            Message
-            <textarea className='w-full border border-gray-300 rounded py-3
-            px-4 mt-2 h-48 resize-none'
-            name='Message' placeholder='Message' required></textarea>
-        </div>
-        <button className='bg-blue-600 text-white px-12 py-2 mb-10 
-         rounded'>{result ? result : "Send Message"}</button>
-</form>
-</motion.div>
-  )
-}
+                    {/* FORM */}
+                    <motion.form
+                        onSubmit={onSubmit}
+                        variants={stagger}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true }}
+                        className="flex flex-col gap-6">
+                        <motion.input
+                            variants={fadeRight}
+                            type="text"
+                            name="name"
+                            placeholder={t("contact_name")}
+                            required
+                            className="w-full border border-gray-300 rounded-lg p-4 text-gray-700 outline-none"
+                        />
 
-export default Contact 
+                        <motion.input
+                            variants={fadeRight}
+                            type="email"
+                            name="email"
+                            placeholder={t("contact_email_input")}
+                            required
+                            className="w-full border border-gray-300 rounded-lg p-4 text-gray-700 outline-none"
+                        />
+
+                        <motion.input
+                            variants={fadeRight}
+                            type="text"
+                            name="subject"
+                            placeholder={t("contact_subject")}
+                            required
+                            className="w-full border border-gray-300 rounded-lg p-4 text-gray-700 outline-none"
+                        />
+
+                        <motion.textarea
+                            variants={fadeRight}
+                            name="message"
+                            placeholder={t("contact_message")}
+                            required
+                            className="w-full border border-gray-300 rounded-lg p-4 h-40 text-gray-700 outline-none resize-none">
+                            </motion.textarea>
+
+                        <motion.button
+                            variants={fadeUp}
+                            type="submit"
+                            className="w-40 text-white py-3 rounded-lg bg-gradient-to-r from-[#00BE9B] to-[#1B4374] hover:opacity-90 transition">
+                            {result ? result : t("contact_send")}
+                        </motion.button>
+                    </motion.form>
+
+                    {/* CONTACT INFO */}
+                    <motion.div
+                        variants={fadeLeft}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true }}
+                        className="flex flex-col gap-6">
+                        <h3 className="text-2xl font-bold">{t("contact_title")}</h3>
+
+                        <p className="text-gray-600 leading-relaxed">
+                            {t("contact_desc")}
+                        </p>
+
+                        <div className="flex items-start gap-4">
+                            <FaMapMarkerAlt className="text-[#1B4374] text-2xl mt-1" />
+                            <p className="text-gray-700">{t("contact_address")}</p>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <FaEnvelope className="text-[#1B4374] text-2xl mt-1" />
+                            <p className="text-gray-700">
+                                {t("contact_email_label")}: contact@salemproject.com
+                            </p>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <FaPhone className="text-[#1B4374] text-2xl mt-1" />
+                            <p className="text-gray-700">
+                                {t("contact_phone_label")}: +20 100 000 0000
+                            </p>
+                        </div>
+                    </motion.div>
+
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
+export default Contact;
